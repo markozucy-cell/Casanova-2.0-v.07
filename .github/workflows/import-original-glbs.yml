@@ -1,6 +1,10 @@
 name: Import CASANOVA's 67 original GLBs
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/import-original-glbs.yml
   release:
     types: [published]
   workflow_dispatch:
@@ -15,11 +19,11 @@ permissions:
 
 jobs:
   import-assets:
-    if: github.event_name == 'workflow_dispatch' || github.event.release.tag_name == 'casanova-originals-67'
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch' || github.event.release.tag_name == 'casanova-originals-67'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag || 'casanova-originals-67' }}
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
@@ -83,6 +87,6 @@ jobs:
           git lfs track 'assets/original-glb/*.glb'
           git add .gitattributes assets/original-glb assets/ORIGINAL_SHA256SUMS.txt assets/ASSET_MANIFEST.json
           if git diff --cached --quiet; then echo 'Assets already committed'; exit 0; fi
-          test "$(git lfs ls-files --cached | wc -l)" -eq 67
+          test "$(git lfs ls-files | wc -l)" -eq 67
           git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Import all 67 original CASANOVA GLBs through Git LFS'
           git push origin HEAD:main
