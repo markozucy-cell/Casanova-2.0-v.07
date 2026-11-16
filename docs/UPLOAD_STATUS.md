@@ -1,24 +1,22 @@
-# CASANOVA GitHub transfer — verified status
+# CASANOVA GitHub upload status (2026-11-16)
 
-This private repository contains **actual, non-placeholder source code** for two experimental CASANOVA implementations.
+**Repository visibility:** private.
 
-## Uploaded and checked
-- `webgpu/casanova_engine_v2.js` — WebGPU V2 engine source, 98,170 bytes.
-- `webgpu/CASANOVA_V2_SOURCE_NO_EMBEDDED_GLBS.html` — approximately 2.1 MB browser source without bundled original models.
-- `webgpu/README_START_HERE.md` and `webgpu/SOURCE_NOTICE.md`.
-- `godot/project.godot`, `godot/scenes/main.tscn`, `godot/scenes/city.tscn`.
-- `godot/scripts/player.gd`, `godot/scripts/menu.gd`.
-- Project descriptions, asset rights warnings, `.gitattributes`, and `.gitignore`.
+## Confirmed on the main branch
+- WebGPU V2 engine source and browser source without embedded GLBs
+- Godot V0.7 project configuration, main and city scenes, menu and player controller
+- Documentation and asset license warning
+- Git LFS configuration
+- `.github/workflows/import-original-glbs.yml`: automatic verified import from GitHub Release
+- `docs/IMPORT_67_GLBS_FROM_RELEASE.md`: phone upload directions
 
-## Not yet uploaded
-- All 67 **original** GLBs (approximately 1.92 GB). Some individually exceed 100 MB.
-- 116 MB bundled standalone WebGPU HTML (needs Git LFS or alternate transfer).
-- Remaining Godot V0.7 GDScript/scene dependencies and model imports.
+## Original model files
+- **67 of 67 original GLBs located and SHA256 verified in the ChatGPT working files**
+- **67 of 67 included across six ZIP_STORED release packs in the current chat**
+- **0 of 67 GLBs in this repository currently** (until a GitHub Release with the six packs is published and the workflow completes)
+- Model total: 1,920,099,248 original bytes (~1.92 GB); 20 buildings, 19 vehicles, 7 roads, 21 infrastructure
 
-**The GitHub copy is NOT yet a complete playable project or complete backup.** Keep the CASANOVA archives and original downloaded GLBs on your device.
+## To complete
+Upload the six `CASANOVA_ASSETS_*.zip` packs to a GitHub Release named `casanova-originals-67` and publish it. The workflow then extracts, verifies original SHA256 hashes, and commits actual GLBs through Git LFS. Check the Actions run and `assets/original-glb/` tree before declaring completion.
 
-## Why this is incomplete
-The current connected GitHub tool can upload text and Git objects but has no supported direct transfer of multi-gigabyte binary files or Git LFS objects from the working filesystem. The `.gitattributes` tracks future LFS files; it does not upload them.
-
-## Rights and privacy
-The repository remains private. Redistribution rights for downloaded third-party models require review.
+**Keep the user's original local assets until a verified successful GitHub Actions run.** Large original files cannot be transferred directly using the available GitHub connector. The Godot project also still has dependencies that are not all migrated.
