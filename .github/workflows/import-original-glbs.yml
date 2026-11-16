@@ -1,0 +1,88 @@
+name: Import CASANOVA's 67 original GLBs
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Release tag containing the 6 uncompressed CASANOVA asset packs
+        required: true
+        default: casanova-originals-67
+
+permissions:
+  contents: write
+
+jobs:
+  import-assets:
+    if: github.event_name == 'workflow_dispatch' || github.event.release.tag_name == 'casanova-originals-67'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      RELEASE_TAG: ${{ github.event.release.tag_name || inputs.release_tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          lfs: false
+          persist-credentials: true
+      - name: Download all six original, uncompressed model packs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/casanova"
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern 'CASANOVA_ASSETS_*.zip' --dir "$RUNNER_TEMP/casanova"
+      - name: Verify archives and every original GLB
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib,json,os,pathlib,shutil,zipfile
+          directory=pathlib.Path(os.environ['RUNNER_TEMP'])/'casanova'
+          names={
+            'CASANOVA_ASSETS_01_BUILDINGS_CORE.zip',
+            'CASANOVA_ASSETS_02_BALI_VILLA.zip',
+            'CASANOVA_ASSETS_03_TUSCAN_VILLA.zip',
+            'CASANOVA_ASSETS_04_VEHICLES.zip',
+            'CASANOVA_ASSETS_05_ROADS.zip',
+            'CASANOVA_ASSETS_06_INFRASTRUCTURE.zip'
+          }
+          actual={p.name for p in directory.glob('CASANOVA_ASSETS_*.zip')}
+          if names != actual: raise SystemExit('Six complete packs required: '+str(names^actual))
+          glbs=set()
+          for name in sorted(names):
+              with zipfile.ZipFile(directory/name) as z:
+                  for item in z.infolist():
+                      path=pathlib.PurePosixPath(item.filename)
+                      if item.is_dir() or path.is_absolute() or '..' in path.parts or not item.filename.startswith('assets/'):
+                          raise SystemExit('Unsafe ZIP path: '+item.filename)
+                      if item.filename.endswith('.glb'):
+                          if item.filename in glbs: raise SystemExit('Duplicate '+item.filename)
+                          glbs.add(item.filename)
+                      elif item.filename not in ('assets/ORIGINAL_SHA256SUMS.txt','assets/ASSET_MANIFEST.json'):
+                          raise SystemExit('Unexpected ZIP file '+item.filename)
+                      target=pathlib.Path.cwd().joinpath(*path.parts)
+                      target.parent.mkdir(parents=True,exist_ok=True)
+                      with z.open(item) as src,target.open('wb') as dst: shutil.copyfileobj(src,dst,1024*1024)
+          if len(glbs)!=67: raise SystemExit('Expected 67 original GLBs, found '+str(len(glbs)))
+          manifest=json.loads(pathlib.Path('assets/ASSET_MANIFEST.json').read_text())
+          if manifest['file_count']!=67 or manifest['total_original_bytes']!=1920099248: raise SystemExit('Wrong asset manifest')
+          for f in manifest['files']:
+              target=pathlib.Path('assets/original-glb')/f['name']
+              if target.stat().st_size!=f['bytes']: raise SystemExit('Size mismatch '+str(target))
+              with target.open('rb') as src: digest=hashlib.file_digest(src,'sha256').hexdigest()
+              if digest!=f['sha256']: raise SystemExit('SHA256 mismatch '+str(target))
+          print('VERIFIED all 67 original GLBs byte-for-byte')
+          PY
+      - name: Upload full-original models using Git LFS
+        shell: bash
+        run: |
+          set -euo pipefail
+          git lfs install --local
+          git lfs track 'assets/original-glb/*.glb'
+          git add .gitattributes assets/original-glb assets/ORIGINAL_SHA256SUMS.txt assets/ASSET_MANIFEST.json
+          if git diff --cached --quiet; then echo 'Assets already committed'; exit 0; fi
+          test "$(git lfs ls-files --cached | wc -l)" -eq 67
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Import all 67 original CASANOVA GLBs through Git LFS'
+          git push origin HEAD:main
