@@ -1,0 +1,28 @@
+; CASANOVA 0.5 - user supplied textured models, mobile LOD imported.
+; Godot 4.3+ / GLES3 Compatibility / touch & keyboard
+config_version=5
+
+[application]
+config/name="CASANOVA V0.7 — Street Infrastructure"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+
+[display]
+window/size/viewport_width=960
+window/size/viewport_height=540
+window/size/window_width_override=960
+window/size/window_height_override=540
+window/stretch/mode="canvas_items"
+window/handheld/orientation=2
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+environment/defaults/default_clear_color=Color(0.66, 0.76, 0.79, 1)
+
+[physics]
+3d/default_gravity=16.0
+
+[debug]
+settings/stdout/print_fps=false
