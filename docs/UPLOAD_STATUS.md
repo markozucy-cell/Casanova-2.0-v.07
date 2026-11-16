@@ -1,15 +1,24 @@
-# Verified GitHub upload status
+# CASANOVA GitHub transfer — verified status
 
-## Uploaded
-- **Actual WebGPU V2 JavaScript engine source:** `webgpu/casanova_engine_v2.js`.
-- **WebGPU V2 browser source shell:** `webgpu/CASANOVA_V2_SOURCE_NO_EMBEDDED_GLBS.html` (no bundled GLBs; supports selecting originals locally).
-- WebGPU project instructions and asset license warnings.
-- Git LFS attribute rules and repository documentation.
-- Godot V0.7 project configuration and main scene (incomplete without dependent scripts/assets).
+This private repository contains **actual, non-placeholder source code** for two experimental CASANOVA implementations.
 
-## NOT uploaded
-- The 116 MB all-in-one WebGPU V2 HTML with its bundled 19 GLBs.
-- The full Godot V0.7 scenes, scripts and assets.
-- The **67 original GLB files** (combined 1,920,099,248 bytes).
+## Uploaded and checked
+- `webgpu/casanova_engine_v2.js` — WebGPU V2 engine source, 98,170 bytes.
+- `webgpu/CASANOVA_V2_SOURCE_NO_EMBEDDED_GLBS.html` — approximately 2.1 MB browser source without bundled original models.
+- `webgpu/README_START_HERE.md` and `webgpu/SOURCE_NOTICE.md`.
+- `godot/project.godot`, `godot/scenes/main.tscn`, `godot/scenes/city.tscn`.
+- `godot/scripts/player.gd`, `godot/scripts/menu.gd`.
+- Project descriptions, asset rights warnings, `.gitattributes`, and `.gitignore`.
 
-**The repository is not a complete game backup yet.** Models larger than 100 MB need Git LFS; this connected uploader cannot import binary files directly from the local build directory. Keep your existing CASANOVA ZIPs and GLBs. Do not assume they are backed up here.
+## Not yet uploaded
+- All 67 **original** GLBs (approximately 1.92 GB). Some individually exceed 100 MB.
+- 116 MB bundled standalone WebGPU HTML (needs Git LFS or alternate transfer).
+- Remaining Godot V0.7 GDScript/scene dependencies and model imports.
+
+**The GitHub copy is NOT yet a complete playable project or complete backup.** Keep the CASANOVA archives and original downloaded GLBs on your device.
+
+## Why this is incomplete
+The current connected GitHub tool can upload text and Git objects but has no supported direct transfer of multi-gigabyte binary files or Git LFS objects from the working filesystem. The `.gitattributes` tracks future LFS files; it does not upload them.
+
+## Rights and privacy
+The repository remains private. Redistribution rights for downloaded third-party models require review.
